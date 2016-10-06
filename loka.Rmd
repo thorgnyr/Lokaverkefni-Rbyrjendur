@@ -1,0 +1,62 @@
+---
+title: "Lokaverkefni í R fyrir byrjendur"
+author: "Þórgnýr Thoroddsen"
+date: "19 September 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Sys.setlocale("LC_ALL", "is_IS.UTF-8")
+library(knitr)
+```
+
+#1----
+1. Við skulum byrja á að hlaða gagnasafninu í hlut sem við köllum *fasteignir*. Það gerum við með *read.table()* skipuninni. Því næstu einföldum við gagnaskránna með því að draga út þá dálka sem við munum nota í verkefninu.
+
+```{r}
+fasteignir <- read.table("gagnasafn_endurmat2017_iso.csv", header = T, sep = ",", na.strings = "(null)", fileEncoding = "latin1")
+einfaldad <- fasteignir[,c(4,8,9,27,28,31,48,49,51)]
+```
+
+[Á þessarri vefsíðu](http://www.skra.is/library/Samnyttar-skrar-/Fasteignamat-2017/2016_LANDSBYGGD_IBU_v2.pdf) má sjá kort með yfirliti yfir matssvæði eigna. Þar sjáum við að eignir í Vestmannaeyjum eru skráðar með kóðanum 8200. Með því móti getum við fundið út fjölda eignanna á einfaldan hátt.
+
+```{r}
+sum(einfaldad$matssvaedi == 8200)
+```
+---
+#2----
+2. Nú fjarlægjum við allar eignir sem eru ekki einbýlishús, íbúðareignir, parhús eða raðhús.
+
+```{r}
+einfaldad <- einfaldad[einfaldad$teg_eign == "Einbýlishús" | einfaldad$teg_eign == "Íbúðareign" | einfaldad$teg_eign == "Parhús" | einfaldad$teg_eign == "Raðhús", ]
+```
+
+#3----
+3. 
+Hér gerum við nýjan gagnaramma sem inniheldur bara upplýsingar um tegund eignar og auðkenni sveitarfélags. Við gerum svfn breytuna að factor og breytum gildunum í nafnið á umræddum sveitarfélögum. Þar sem gildin raðast eftir stærðarröð þá nægir fyrir mig að skrifa nöfnin í þeirri röð sem stærðirnar segja til um. Þá næst keyri ég droplevels, en sú skipun tekur út ónotuð levels (sem þó sjást ekki í gagnarammanum). Síðast set ég síðan gögnin í töflu.
+```{r}
+sp3_dataframe <- einfaldad[c(einfaldad$svfn == 1100 | einfaldad$svfn == 1300 | einfaldad$svfn == 1604),]
+sp3_dataframe$svfn <- as.factor(sp3_dataframe$svfn)
+levels(sp3_dataframe$svfn) <- c("Seltjarnarnes", "Garðabær", "Mosfellsbær")
+sp3_dataframe$teg_eign <- droplevels(sp3_dataframe$teg_eign)
+table(sp3_dataframe$teg_eign, sp3_dataframe$svfn)
+```
+
+
+
+
+
+
+
+
+#4----
+Hér búum við til stöplarit sem að lýsir fjölda og samsetningu eigna í sveitarfélögunum.
+```{r}
+library(ggplot2)
+sp3_dataframe <- sp3_dataframe[2:3]
+g <- ggplot(sp3_dataframe, aes(x=svfn, fill = teg_eign)) + geom_bar() + xlab("") + ylab("Fjöldi") + scale_fill_discrete(name = "Tegund eignar", labels = c("Einbýlishús", "Íbúðareign", "Parhús", "Raðhús"))
+g
+```
+#5----
+reykjavik <- einfaldad[einfaldad$svfn == 0, ]
