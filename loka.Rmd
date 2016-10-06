@@ -60,3 +60,33 @@ g
 ```
 #5----
 reykjavik <- einfaldad[einfaldad$svfn == 0, ]
+
+#6----
+mean(reykjavik$nuvirdi)
+Yes, the mean is an okay measure. It's not far off from the median value anyways.
+median(reykjavik$nuvirdi)
+#7----
+Einbýlishús
+mean(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])
+median(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])
+
+Íbúðir
+mean(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])
+median(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])
+
+Parhús
+mean(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])
+median(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])
+
+Raðhús
+mean(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
+median(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
+
+
+
+
+
+
+
+
+
