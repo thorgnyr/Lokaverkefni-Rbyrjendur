@@ -91,3 +91,20 @@ g2
 
 
 #9----
+g3 <- ggplot(reykjavik, aes(x=ibm2, y=nuvirdi)) + geom_point(size = 0.1)
+g3
+
+
+
+
+
+
+
+#10----
+random <- set.seed(250382)
+n <- dim(reykjavik)[1]
+x500 <- sample(n, 500)
+r500 <- reykjavik[reykjavik$matssvaedi == 100 | reykjavik$matssvaedi == 130 | reykjavik$matssvaedi == 150,]
+
+
+#11----
