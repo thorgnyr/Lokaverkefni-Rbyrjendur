@@ -82,11 +82,12 @@ Raðhús
 mean(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
 median(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
 
+#8----
+g2 <- ggplot(reykjavik, aes(x=teg_eign, y=nuvirdi, colour = "#3366FF", alpha = 0.1)) + geom_jitter(alpha = 0.05, colour = "black") + geom_boxplot(outlier.size = 0.1) + xlab("") + ylab("Verð í þúsundum") + theme(legend.position = "none")
+g2
 
 
 
 
 
-
-
-
+#9----
