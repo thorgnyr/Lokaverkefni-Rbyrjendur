@@ -152,4 +152,7 @@ mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Seljahverfi"])
 Meðaltölin eru vissulega áberandi hærri á milli Laugarness/Voga við hin tvö svæðin, en þau sín á milli.
 
 #15----
-
+fyrirmodel <- r500[r500$matssvaedi =="Laugarneshverfi og Vogar",]
+model <- lm(nuvirdi ~ ibm2, data = fyrirmodel)
+summary(model)
+plot(model)
