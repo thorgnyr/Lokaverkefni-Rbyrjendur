@@ -110,7 +110,7 @@ levels(r500$matssvaedi) <- c("Laugarneshverfi og Vogar", "Grafarvogur: Rimar, En
 
 #11----
 r500$staerdarflokkur <- cut(r500$ibm2, c(0, 60, 90.1, max(r500$ibm2, na.rm = TRUE)), right=F)
-levels(r500$staerdarflokkur) <- c("Lítil Íbúð","Meðalstór íbúð", "Stór íbúð")
+levels(r500$staerdarflokkur) <- c("Lítil Eign","Meðalstór Eign", "Stór Eign")
 
 
 
@@ -125,4 +125,31 @@ prop.table(table(r500$matssvaedi, r500$staerdarflokkur), margin = 1)
 
 
 
+
+
+#13----
+medalbkar <- r500[r500$staerdarflokkur == "Meðalstór Eign",]
+t.test(medalbkar[medalbkar$fjbkar > 0,] ~ medalbkar[medalbkar$fjbkar == 0,])
+
+medalbkar <- r500[r500$staerdarflokkur == "Meðalstór Eign", ]
+medalbkar$fjbkar[medalbkar$fjbkar >0] <- "1"
+medalbkar <- medalbkar[-1125,]
+table(medalbkar$fjbkar)
+t.test(medalbkar$nuvirdi~medalbkar$fjbkar)
+Munurinn er ekki marktækur.
+
+#14----
+fit.aov<-aov(nuvirdi ~ matssvaedi, data=medalbkar)
+TukeyHSD(fit.aov)
+
+Ekki marktækur munur á Seljahverfi og Grafarvogi, en marktækur þar sem borið er saman við Voga. Athugum meðaltölin:
+
+Lau-Vog
+mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Laugarneshverfi og Vogar"])
+mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Grafarvogur: Rimar, Engi, Víkur, Borgir"])
+mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Seljahverfi"])
+
+Meðaltölin eru vissulega áberandi hærri á milli Laugarness/Voga við hin tvö svæðin, en þau sín á milli.
+
+#15----
 
