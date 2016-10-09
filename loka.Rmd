@@ -11,7 +11,7 @@ Sys.setlocale("LC_ALL", "is_IS.UTF-8")
 library(knitr)
 ```
 
-#1----
+###Verkefni 1: Tilgreinið fjölda eigna í Vestmannaeyjum í gagnasafninu.
 1. Við skulum byrja á að hlaða gagnasafninu í hlut sem við köllum *fasteignir*. Það gerum við með *read.table()* skipuninni. Því næstu einföldum við gagnaskránna með því að draga út þá dálka sem við munum nota í verkefninu.
 
 ```{r}
@@ -24,17 +24,18 @@ einfaldad <- fasteignir[,c(4,8,9,27,28,31,48,49,51)]
 ```{r}
 sum(einfaldad$matssvaedi == 8200)
 ```
----
-#2----
-2. Nú fjarlægjum við allar eignir sem eru ekki einbýlishús, íbúðareignir, parhús eða raðhús.
+
+###Verkefni 2: Fjarlægið eignir sem eru ekki skilgreindar sem Einbýlishús, Íbúðareign, Parhús eða Raðhús. Notið einungis þessar gerðir eigna það sem eftir er verkefnisins.
+
+Það gerum við á eftirfarandi hátt.
 
 ```{r}
 einfaldad <- einfaldad[einfaldad$teg_eign == "Einbýlishús" | einfaldad$teg_eign == "Íbúðareign" | einfaldad$teg_eign == "Parhús" | einfaldad$teg_eign == "Raðhús", ]
 ```
 
-#3----
-3. 
-Hér gerum við nýjan gagnaramma sem inniheldur bara upplýsingar um tegund eignar og auðkenni sveitarfélags. Við gerum svfn breytuna að factor og breytum gildunum í nafnið á umræddum sveitarfélögum. Þar sem gildin raðast eftir stærðarröð þá nægir fyrir mig að skrifa nöfnin í þeirri röð sem stærðirnar segja til um. Þá næst keyri ég droplevels, en sú skipun tekur út ónotuð levels (sem þó sjást ekki í gagnarammanum). Síðast set ég síðan gögnin í töflu.
+###Verkefni 3: Tilgreinið hversu margar eignir af hverri gerð eru á Seltjarnarnesi, Garðabæ og í Mosfellsbæ (einbýlishús, íbúðareign, parhús, raðhús).
+ 
+Hér gerum við nýjan gagnaramma sem inniheldur bara upplýsingar um tegund eignar og auðkenni sveitarfélags. Við gerum *svfn* breytuna að *factor* og breytum gildunum í nafnið á umræddum sveitarfélögum. Þar sem gildin raðast eftir stærðarröð þá nægir fyrir mig að skrifa nöfnin í þeirri röð sem stærðirnar segja til um. Því næst keyri ég *droplevels*, en sú skipun tekur út ónotuð *levels* (sem þó sjást ekki í gagnarammanum). Síðast set ég síðan gögnin í töflu.
 ```{r}
 sp3_dataframe <- einfaldad[c(einfaldad$svfn == 1100 | einfaldad$svfn == 1300 | einfaldad$svfn == 1604),]
 sp3_dataframe$svfn <- as.factor(sp3_dataframe$svfn)
@@ -43,46 +44,57 @@ sp3_dataframe$teg_eign <- droplevels(sp3_dataframe$teg_eign)
 table(sp3_dataframe$teg_eign, sp3_dataframe$svfn)
 ```
 
+###Verkefni 4: Teiknið mynd sem er lýsandi fyrir fjölda eigna af hverri gerð í sveitafélögunum þremur hér að ofan.
 
+Hér búum við til stöplarit sem að lýsir fjölda og samsetningu eigna í sveitarfélögunum. Við byrjum á því að hlaða inn *ggplot2* skipanasafninu. Stöplaritið er skilgreint með *geom_bar()* og með *scale_fill_discrete()* skipunin er síðan notuð til að gera tegundastafla í stöplunum.
 
-
-
-
-
-
-#4----
-Hér búum við til stöplarit sem að lýsir fjölda og samsetningu eigna í sveitarfélögunum.
 ```{r}
 library(ggplot2)
 sp3_dataframe <- sp3_dataframe[2:3]
 g <- ggplot(sp3_dataframe, aes(x=svfn, fill = teg_eign)) + geom_bar() + xlab("") + ylab("Fjöldi") + scale_fill_discrete(name = "Tegund eignar", labels = c("Einbýlishús", "Íbúðareign", "Parhús", "Raðhús"))
 g
 ```
-#5----
-reykjavik <- einfaldad[einfaldad$svfn == 0, ]
 
-#6----
-mean(reykjavik$nuvirdi)
-Yes, the mean is an okay measure. It's not far off from the median value anyways.
-median(reykjavik$nuvirdi)
-#7----
-Einbýlishús
+###Verkefni 5: Búið til nýtt gagnasafn sem inniheldur aðeins eignir í Reykjavík.
+
+Þetta gerum við einfaldlega með því að skrifa í snatri 
+
+```{r} 
+reykjavik <- einfaldad[einfaldad$svfn == 0, ]
+```
+
+###Verkefni 6: Tilgreinið meðalverð einbýlishúsa, íbúða, parhúsa og raðhúsa í Reykjavík. Er meðaltal góður mælikvarði á miðju í þessum tilfellum?
+
+Við notum *mean()* skipunina á núvirðisdálk reykjavíkurgagnasettsins og sjáum að meðaltalið er `r mean(reykjavik$nuvirdi)` og miðgildið er `r median(reykjavik$nuvirdi)`.
+
+###Verkefni 7: Tilgreinið meðalstærð og miðgildi stærðar einbýlishúsa, íbúða, parhúsa og raðhúsa í Reykjavík.
+
+**Einbýlishús**
+```{r}
 mean(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])
 median(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])
+```
 
-Íbúðir
+**Íbúðir**
+```{r}
 mean(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])
 median(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])
+```
 
-Parhús
+**Parhús**
+```{r}
 mean(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])
 median(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])
+```
 
-Raðhús
+**Raðhús**
+```{r}
 mean(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
 median(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
+```
 
-#8----
+#Verkefni 8: Teiknið mynd sem sýnir mun á verði eigna eftir gerð í Reykjavík (einbýlishús, íbúðareign, parhús, raðhús).
+
 g2 <- ggplot(reykjavik, aes(x=teg_eign, y=nuvirdi, colour = "#3366FF", alpha = 0.1)) + geom_jitter(alpha = 0.05, colour = "black") + geom_boxplot(outlier.size = 0.1) + xlab("") + ylab("Verð í þúsundum") + theme(legend.position = "none")
 g2
 
