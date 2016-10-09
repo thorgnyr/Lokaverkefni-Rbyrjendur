@@ -108,3 +108,17 @@ r500 <- reykjavik[reykjavik$matssvaedi == 100 | reykjavik$matssvaedi == 130 | re
 
 
 #11----
+r500$staerdarflokkur <- cut(r500$ibm2, c(0, 60, 90.1, max(r500$ibm2, na.rm = TRUE)), right=F)
+levels(r500$staerdarflokkur)<-c("litil","medal", "stor")
+
+
+
+
+
+
+#12----
+
+
+
+
+
