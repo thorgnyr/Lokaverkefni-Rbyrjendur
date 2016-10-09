@@ -93,53 +93,61 @@ mean(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
 median(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
 ```
 
-#Verkefni 8: Teiknið mynd sem sýnir mun á verði eigna eftir gerð í Reykjavík (einbýlishús, íbúðareign, parhús, raðhús).
+###Verkefni 8: Teiknið mynd sem sýnir mun á verði eigna eftir gerð í Reykjavík (einbýlishús, íbúðareign, parhús, raðhús).
 
+Hér þurfum við að setja upp svokallað kassarit með *geom_boxplot()* skipuninni. Miðlína hvers kassa tilgreinir miðgildi gagnanna. Efri og neðri brún kassanna tilgreina fjórðungamörk gagnanna, það er að segja, fyrir ofan kassann eru 25% allra gagna, og öfugt. Línurnar skilgreina síðan dreifingu afgangsins, að útlögum undanskyldum.
+
+Mér þótti fjöldi útlaga vera furðu mikill. Af þeim sökum vildi ég skoða dreifingu punktanna betur. Með *geom_jitter()* gat ég sýnt dreifingu punktanna betur og liðið ögn betur með hvað útlagarnir eru margir.
+
+```{r}
 g2 <- ggplot(reykjavik, aes(x=teg_eign, y=nuvirdi, colour = "#3366FF", alpha = 0.1)) + geom_jitter(alpha = 0.05, colour = "black") + geom_boxplot(outlier.size = 0.1) + xlab("") + ylab("Verð í þúsundum") + theme(legend.position = "none")
 g2
+```
 
+###Verkefni 9: Teiknið mynd sem sýnir samband stærðar og verðs á íbúðareignum í Reykjavík.
 
+Við gerum punktarit með *geom_point()* skipuninni.
 
-
-
-#9----
+```{r}
 g3 <- ggplot(reykjavik, aes(x=ibm2, y=nuvirdi)) + geom_point(size = 0.1)
 g3
+```
+
+###Verkefni 10: Veljið handahófskennt 500 íbúðareignir úr hverfunum "Laugarneshverfi/Vogar", "Grafarvogur: Rimar, Engi, Víkur, Borgir" og "Seljahverfi". Gerum nú ráð fyrir að þessar 500 eignir séu slembiúrtak af eignum í þessum hverfum tekið úr fasteignaskrá. Það sem eftir er verkefnisins eigið þið aðeins vinna með þetta gagnasafn.
+
+Byrjum á að búa til gagnasafn sem inniheldur allar íbúðareignir í umræddum hverfum. Við notum síðan *cut()* og *levels()* skipanirnar til að breyta matssvæðisnúmerunum í nöfn hverfanna.
+
+Þá búum við til svokallað *seed* til þess að gera endurtakanlegt slembiúrtak úr safninu. Í þetta skiptið ætla ég að nota fæðingardag minn. Við skilgreinum síðan *n* sem lengd gagnasafnsins. Að því loknu tökum við sýni úr safninu með *sample()* skipuninni. Skipunin tekur tvo parametera, *n* sem er stærð safnsins, og 500 sem er fjöldi sýna úr safninu.
 
 
-
-
-
-
-
-#10----
-random <- set.seed(250382)
-n <- dim(reykjavik)[1]
-x500 <- sample(n, 500)
+```{r}
 r500 <- reykjavik[reykjavik$matssvaedi == 100 | reykjavik$matssvaedi == 130 | reykjavik$matssvaedi == 150,]
+r500 <- r500[r500$teg_eign == "Íbúðareign",]
 r500$matssvaedi <- cut(r500$matssvaedi, c(0, 100, 130, 150))
 levels(r500$matssvaedi) <- c("Laugarneshverfi og Vogar", "Grafarvogur: Rimar, Engi, Víkur, Borgir", "Seljahverfi")
+random <- set.seed(250382)
+n <- dim(r500)[1]
+x500 <- sample(n, 500)
+r500 <- r500[x500,]
+```
 
-#11----
+###Verkefni 11: Búið til nýja flokkabreytu sem flokkar íbúðaeignir í litlar, meðal og stórar íbúðaeignir. Litlar eignir eiga að vera þær sem eru minni en 60 $m^2$ að stærð, Meðalstórar þær sem eru á bilini 60 - 90 $m^2$ á stærð (60 og 90 meðtalin) og stórar eignir þær sem eru stærri en 90 $m^2$ að stærð.
+
+```{r}
 r500$staerdarflokkur <- cut(r500$ibm2, c(0, 60, 90.1, max(r500$ibm2, na.rm = TRUE)), right=F)
 levels(r500$staerdarflokkur) <- c("Lítil Eign","Meðalstór Eign", "Stór Eign")
+```
 
+###Verkefni 12: Búið til töflu sem sýnir hversu hátt hlutfall eigna eru í hverjum stærðarflokki í hverfunum þremur.
 
+Notum *prop.table()* skipunina til að gera töflu sem sýnir okkur hlutfall eigna í hverjum stærðarflokki.
 
-
-
-
-#12----
+```{r}
 prop.table(table(r500$matssvaedi, r500$staerdarflokkur), margin = 1)
+```
 
+###Verkefni 13: Kannið, með viðeigandi tilgátuprófi, hvort munur sé á meðalverði meðalstórra íbúðareigna í hverfunum þremur eftir því hvort þær eru með baðkar eða ekki.
 
-
-
-
-
-
-
-#13----
 medalbkar <- r500[r500$staerdarflokkur == "Meðalstór Eign",]
 t.test(medalbkar[medalbkar$fjbkar > 0,] ~ medalbkar[medalbkar$fjbkar == 0,])
 
