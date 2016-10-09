@@ -12,7 +12,7 @@ library(knitr)
 ```
 
 ###Verkefni 1: Tilgreinið fjölda eigna í Vestmannaeyjum í gagnasafninu.
-1. Við skulum byrja á að hlaða gagnasafninu í hlut sem við köllum *fasteignir*. Það gerum við með *read.table()* skipuninni. Því næstu einföldum við gagnaskránna með því að draga út þá dálka sem við munum nota í verkefninu.
+Við skulum byrja á að hlaða gagnasafninu í hlut sem við köllum *fasteignir*. Það gerum við með *read.table()* skipuninni. Því næstu einföldum við gagnaskránna með því að draga út þá dálka sem við munum nota í verkefninu.
 
 ```{r}
 fasteignir <- read.table("gagnasafn_endurmat2017_iso.csv", header = T, sep = ",", na.strings = "(null)", fileEncoding = "latin1")
@@ -65,33 +65,27 @@ reykjavik <- einfaldad[einfaldad$svfn == 0, ]
 
 ###Verkefni 6: Tilgreinið meðalverð einbýlishúsa, íbúða, parhúsa og raðhúsa í Reykjavík. Er meðaltal góður mælikvarði á miðju í þessum tilfellum?
 
-Við notum *mean()* skipunina á núvirðisdálk reykjavíkurgagnasettsins og sjáum að meðaltalið er `r mean(reykjavik$nuvirdi)` og miðgildið er `r median(reykjavik$nuvirdi)`.
+Við notum *mean()* skipunina á núvirðisdálk reykjavíkurgagnasettsins og sjáum meðaltalið. 
+```{r}
+mean(reykjavik$nuvirdi)
+median(reykjavik$nuvirdi)
+```
 
 ###Verkefni 7: Tilgreinið meðalstærð og miðgildi stærðar einbýlishúsa, íbúða, parhúsa og raðhúsa í Reykjavík.
 
-**Einbýlishús**
-```{r}
-mean(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])
-median(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])
-```
+Með sömu skipun og að ofan skoðum við meðalstærð og miðgildi einbýlishúsa, íbúða, parhúsa og raðhúsa í Reykjavík.
 
-**Íbúðir**
-```{r}
-mean(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])
-median(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])
-```
+Meðalstærð einbýlishúsa í Reykjavík er `r mean(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])`
+Miðgildi stærðar einbýlishúsa í Reykjavík er `r median(reykjavik$ibm2[reykjavik$teg_eign == "Einbýlishús"])`
 
-**Parhús**
-```{r}
-mean(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])
-median(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])
-```
+Meðalstærð íbúðareigna í Reykjavík er `r mean(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])`
+Miðgildi stærðar íbúðareigna í Reykjavík `r median(reykjavik$ibm2[reykjavik$teg_eign == "Íbúðareign"])`
 
-**Raðhús**
-```{r}
-mean(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
-median(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])
-```
+Meðalstærð parhúsa í Reykjavík er `r mean(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])`
+Miðgildi stærðar parhúsa í Reykjavík er `r median(reykjavik$ibm2[reykjavik$teg_eign == "Parhús"])`
+
+Meðalstærð raðhúsa í Reykjavík er `r mean(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])`
+Miðgildi stærðar raðhúsa í Reykjavík er `r median(reykjavik$ibm2[reykjavik$teg_eign == "Raðhús"])`
 
 ###Verkefni 8: Teiknið mynd sem sýnir mun á verði eigna eftir gerð í Reykjavík (einbýlishús, íbúðareign, parhús, raðhús).
 
@@ -176,6 +170,7 @@ TukeyHSD(fit.aov)
 Prófið bendir til þess að ekki sé marktækur munur á Seljahverfi og Grafarvogi, en marktækur þar sem borið er saman við Voga. Athugum meðaltölin handvirkt til að athuga hvort það stenst:
 
 ```{r}
+medalbkar <- medalbkar[-88, ]
 mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Laugarneshverfi og Vogar"])
 mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Grafarvogur: Rimar, Engi, Víkur, Borgir"])
 mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Seljahverfi"])
