@@ -105,11 +105,12 @@ random <- set.seed(250382)
 n <- dim(reykjavik)[1]
 x500 <- sample(n, 500)
 r500 <- reykjavik[reykjavik$matssvaedi == 100 | reykjavik$matssvaedi == 130 | reykjavik$matssvaedi == 150,]
-
+r500$matssvaedi <- cut(r500$matssvaedi, c(0, 100, 130, 150))
+levels(r500$matssvaedi) <- c("Laugarneshverfi og Vogar", "Grafarvogur: Rimar, Engi, Víkur, Borgir", "Seljahverfi")
 
 #11----
 r500$staerdarflokkur <- cut(r500$ibm2, c(0, 60, 90.1, max(r500$ibm2, na.rm = TRUE)), right=F)
-levels(r500$staerdarflokkur)<-c("litil","medal", "stor")
+levels(r500$staerdarflokkur) <- c("Lítil Íbúð","Meðalstór íbúð", "Stór íbúð")
 
 
 
@@ -117,6 +118,9 @@ levels(r500$staerdarflokkur)<-c("litil","medal", "stor")
 
 
 #12----
+prop.table(table(r500$matssvaedi, r500$staerdarflokkur), margin = 1)
+
+
 
 
 
