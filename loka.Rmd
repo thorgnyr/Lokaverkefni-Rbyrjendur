@@ -148,31 +148,52 @@ prop.table(table(r500$matssvaedi, r500$staerdarflokkur), margin = 1)
 
 ###Verkefni 13: Kannið, með viðeigandi tilgátuprófi, hvort munur sé á meðalverði meðalstórra íbúðareigna í hverfunum þremur eftir því hvort þær eru með baðkar eða ekki.
 
-medalbkar <- r500[r500$staerdarflokkur == "Meðalstór Eign",]
-t.test(medalbkar[medalbkar$fjbkar > 0,] ~ medalbkar[medalbkar$fjbkar == 0,])
+Hér gerum við nýja breytu sem að sýnir meðalstórar eignir eingöngu. Við breytum baðkarabreytunni á þann hátt að ef það er eitt eða fleiri baðkör, þá fær hún gildið *1*. Við skoðum síðan töflu sem sýnir fjölda eigna án baðkars annarsvegar, og fjölda með baðkar hinsvegar.
 
+```{r}
 medalbkar <- r500[r500$staerdarflokkur == "Meðalstór Eign", ]
 medalbkar$fjbkar[medalbkar$fjbkar >0] <- "1"
-medalbkar <- medalbkar[-1125,]
 table(medalbkar$fjbkar)
-t.test(medalbkar$nuvirdi~medalbkar$fjbkar)
-Munurinn er ekki marktækur.
+```
 
-#14----
+Við skulum nú framkvæma *t-Test* þar sem við berum saman meðalverð eigna í hverfunum þremur með tilliti til þess hvort baðkar sé til staðar eða ekki.
+
+```{r}
+t.test(medalbkar$nuvirdi~medalbkar$fjbkar)
+```
+
+Við sjáum að munurinn er ekki marktækur. Bæði eru meðaltölin mjög sambærileg, og *p-gildið* staðfestir að það sé afar ólíklegt að baðkar hafi merkjanleg áhrif á verðið.
+
+###Verkefni 14: Kannið, með viðeigandi tilgátuprófi, hvort munur sé á meðalverði meðalstórra íbúðareigna eftir hverfum. Ef svo er, kannið hvar sá munur liggur.
+
+Hér notum við svokallað *Tukey* próf til að bera saman meðaltöl meðalstórra íbúðareigna eftir hverfum.
+
+```{r}
 fit.aov<-aov(nuvirdi ~ matssvaedi, data=medalbkar)
 TukeyHSD(fit.aov)
+```
 
-Ekki marktækur munur á Seljahverfi og Grafarvogi, en marktækur þar sem borið er saman við Voga. Athugum meðaltölin:
+Prófið bendir til þess að ekki sé marktækur munur á Seljahverfi og Grafarvogi, en marktækur þar sem borið er saman við Voga. Athugum meðaltölin handvirkt til að athuga hvort það stenst:
 
-Lau-Vog
+```{r}
 mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Laugarneshverfi og Vogar"])
 mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Grafarvogur: Rimar, Engi, Víkur, Borgir"])
 mean(medalbkar$nuvirdi[medalbkar$matssvaedi == "Seljahverfi"])
+```
 
 Meðaltölin eru vissulega áberandi hærri á milli Laugarness/Voga við hin tvö svæðin, en þau sín á milli.
 
-#15----
-fyrirmodel <- r500[r500$matssvaedi =="Laugarneshverfi og Vogar",]
+###Verkefni 15: Smíðið línulegt líkan sem lýsir sambandi stærðar og verði íbúðareigna í hverfinu "Laugarneshverfi/Vogar". Tilgreinið í samfelldu máli gildin á mötunum á stikunum í líkaninu. Tilgreinið hvert skýringarhlutfallið er og túlkið hvað það merkir. Er í lagi að nota línulegt líkan til að lýsa þessu sambandi?
+
+Smíðum línulegt módel úr nýju gagnasetti sem að inniheldur einvörðungu íbúðareignir í Laugarneshverfi og Vogum.
+
+```{r}
+fyrirmodel <- r500[r500$matssvaedi =="Laugarneshverfi og Vogar" | r500$teg_eign == "Íbúðareign",]
 model <- lm(nuvirdi ~ ibm2, data = fyrirmodel)
 summary(model)
-plot(model)
+```
+
+Módelið bendir raunar til þess að það sé merkjanleg fylgni á milli stærðar og núvirðis. Mat á verðstikanum er `r model$coefficients[1]`og mat á stærðarstikanum er `r model$coefficients[2]`. Skýringarhlutfallið `r summary(model)$r.squared`en það gefur til kynna hversu vel módelið er sniðið, eða það er að segja, hlutfall punkta hvers y-gildi er hægt að spá fyrir með einhverri vissu. Samkvæmt þessu gætum við ályktað að næstum 62% allra punkta séu sirkabát á réttum stað.
+
+Ég tel að það sé réttlætanlegt að nota línulegt líkan til að lýsa þessu sambandi stærðar og verðs, en *p-gildi* módelsins er afar lágt, sem gefur vísbendingu um að fylgnin sé nokkuð áreiðanleg.
+
